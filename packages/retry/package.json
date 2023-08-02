@@ -1,0 +1,39 @@
+{
+  "name": "@ajimae/retry",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "simple, easy-to-use and zero-dependency javascript async retry package.",
+  "keyword": [
+    "retry",
+    "async-retry",
+    "backoff",
+    "efficient",
+    "simple-retry",
+    "typescript",
+    "node",
+    "express",
+    "react",
+    "react-native",
+    "browser"
+  ],
+  "homepage": "https://github.com/ajimae/osl",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajimae/osl.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ajimae/osl/issues"
+  },
+  "files": ["dist", "CHANGELOG.md"],
+  "author": "Chukwuemeka Ajima <meeky.ae@gmail.com>",
+  "main": "dist/ajimae-retry.cjs.js",
+  "module": "dist/ajimae-retry.esm.js",
+  "browser": {
+    "./dist/ajimae-retry.cjs.js": "./dist/ajimae-retry.browser.cjs.js",
+    "./dist/ajimae-retry.esm.js": "./dist/ajimae-retry.browser.esm.js"
+  }
+}
+
