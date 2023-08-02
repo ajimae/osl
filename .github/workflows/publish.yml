@@ -1,8 +1,12 @@
 name: Publish
 on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
   push:
     branches:
-      - master
+      - "master"
 
 # ensure no two publish workflows are not happening concurrently
 concurrency: ${{ github.workflow }}-${{ github.ref }}

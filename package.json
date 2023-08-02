@@ -11,6 +11,7 @@
     "@babel/core": "^7.22.9",
     "@babel/preset-env": "^7.22.9",
     "@babel/preset-typescript": "^7.22.5",
+    "@changesets/changelog-github": "^0.4.8",
     "@changesets/cli": "^2.26.2",
     "@manypkg/cli": "^0.15.0",
     "@preconstruct/cli": "2.3.0",
@@ -28,6 +29,8 @@
     "lint": "tsc",
     "build": "preconstruct build",
     "postinstall": "manypkg check && preconstruct dev",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "changeset": "changeset",
+    "changeset:version-and-format": "changeset version && prettier --write --parser json '**/package.json'"
   }
 }
