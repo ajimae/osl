@@ -22,7 +22,7 @@ jobs:
           # other workflows
           # https://help.github.com/en/actions/reference/events-that-trigger-workflows#triggering-new-workflows-using-a-personal-access-token
           # https://github.community/t/action-does-not-trigger-another-on-push-tag-action/17148/8
-          token: ${{ secrets.REPO_TOKEN }}
+          token: ${{ secrets.GH_TOKEN }}
 
       - name: Read .nvmrc
         # run: echo ::set-output name=NVMRC::$(cat .nvmrc)
@@ -74,5 +74,5 @@ jobs:
           version: yarn changeset:version-and-format
           commit: 'ci(changesets): version packages'
         env:
-          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN || secrets.OSL_GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
