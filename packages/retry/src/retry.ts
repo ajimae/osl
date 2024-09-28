@@ -1,77 +1,87 @@
 export type RetryPolicy = {
-  retryCount: number,
-  maxRetries: number,
-  backoff: boolean,
-  retryDelay: number,
-  maxDelay: number
-}
+  maxRetries: number;
+  backoff: boolean;
+  retryDelay: number;
+  maxDelay: number;
+};
 
-function calcRetryDelay({
+export function calcRetryDelay({
   retryCount,
   retryDelay,
   // maxRetries,
   backoff,
-  maxDelay
-}: RetryPolicy): number {
+  maxDelay,
+}: RetryPolicy & { retryCount: number }): number {
   if (backoff) {
     return retryCount !== 0
       ? Math.min(
         Math.round((Math.random() + 1) * retryDelay * 2 ** retryCount),
-        maxDelay
-      ) : retryDelay;
+        maxDelay,
+      )
+      : retryDelay;
   }
 
-  return retryDelay
+  return retryDelay;
 }
 
 function delay(ms: number): Promise<void> {
   return new Promise<void>((resolve): void => {
-    setTimeout(resolve, ms)
-  })
+    setTimeout(resolve, ms);
+  });
 }
 
-const retryPolicy_: Omit<RetryPolicy, 'retryCount'> = {
+const retryPolicy_: RetryPolicy = {
   maxDelay: Infinity,
   maxRetries: 3,
   backoff: true,
-  retryDelay: 200 // 200 ms
-}
+  retryDelay: 200, // 200 ms
+};
 
 export default async function retry<T>(
   fn: () => Promise<T>,
-  predicate: (response: T, retryCount: number, ...args: Array<unknown>) => boolean,
-  retryPolicy?: Partial<RetryPolicy>
+  predicate: (
+    response: T,
+    retryCount: number,
+  ) => boolean,
+  retryPolicy?: Partial<RetryPolicy>,
 ): Promise<T> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let retryCount = 0;
+      let response = await fn();
 
-  let retryCount = 0;
-  let response = await fn();
+      // first attempt
+      if (predicate(response, retryCount)) {
+        return resolve(response);
+      }
 
-  if (predicate(response, retryCount)) {
-    return response;
-  }
+      const options: RetryPolicy = Object.assign({}, retryPolicy_, retryPolicy);
 
-  const options = {
-    ...retryPolicy_,
-    ...retryPolicy
-  };
+      // should we wait before starting the retry?
+      while (retryCount < options.maxRetries) {
+        ++retryCount;
+        response = await fn();
 
-  // should we wait before starting the retry?
-  while (retryCount < options.maxRetries) {
-    retryCount++;
-    response = await fn();
+        if (predicate(response, retryCount)) {
+          return resolve(response);
+        }
 
-    if (predicate(response, retryCount)) {
-      return response;
+        // sleep
+        await delay(
+          calcRetryDelay({
+            ...options,
+            retryCount,
+          }),
+        );
+      }
+
+      /**
+       * at the end of the day
+       * resolve unresolved response
+       */
+      resolve(response);
+    } catch (err) {
+      reject(err);
     }
-
-    // sleep
-    await delay(
-      calcRetryDelay({
-        ...options,
-        retryCount
-      })
-    );
-  }
-
-  return response;
+  });
 }
