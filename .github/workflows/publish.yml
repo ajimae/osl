@@ -69,5 +69,5 @@ jobs:
           version: yarn changeset:version-and-format
           commit: 'ci(changesets): version packages'
         env:
-          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN || secrets.OSL_GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
