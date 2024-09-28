@@ -59,7 +59,10 @@ jobs:
 
 
       - name: Building packages
-        run: yarn lint && yarn build
+        run: |
+          yarn lint
+          yarn build
+          yarn test
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets

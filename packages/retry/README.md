@@ -20,7 +20,7 @@ Basic usage example
 import { retry } from '@ajimae/retry';
 
 // create the retry wrapper
-function retryFn() {
+async function exec() {
   return new Promise((resolve) => {
     // simulate a network call that takes 1.5 seconds
     setTimeout(() => {
@@ -39,16 +39,17 @@ function retryFn() {
 // create a predicate function
 function predicate(response, retryCount) {
   /**
-   * access the retry count using the `retryCount` param
+   * access the retry count using the `retryCount` param,
    * once the condition or conditions specified in this
-   * predicate function is met, the retry exits
+   * predicate function is met or the `maxRetries` is exhausted
+   * (retryCount == maxRetries) the retry exits.
    */
-  return (response.statusCode == 200);
+  return (response.statusCode != 200);
 }
 
 (async function main() {
   const result = await retry(exec, predicate, { maxRetries: 5 })
-})
+})();
 
 ```
 
@@ -62,7 +63,7 @@ The package exposes a `retry` function which is a simple function that takes in 
 // exposed retry function
 function retry<T>(
   fn: () => Promise<T>,
-  predicate: (response: T, retryCount: number, ...args: Array<unknown>) => boolean,
+  predicate: (response: T, retryCount: number) => boolean,
   retryPolicy?: Partial<RetryPolicy>
 ): Promise<T>;
 ```
@@ -81,7 +82,7 @@ async function execute(): Promise<T> {
 - A predicate (function) takes in the response (the result from the `execute` function) as the first argument, a `retryCount` as the second argument and returns a boolean.
 
 ```ts
-function predicate(response: T, retryCount: number, ...args: Array<unknown>): boolean {
+function predicate(response: T, retryCount: number): boolean {
   return true | false
 }
 ```
@@ -92,7 +93,7 @@ function predicate(response: T, retryCount: number, ...args: Array<unknown>): bo
 ```ts
 import { RetryPolicy } from '@ajimae/retry'
 
-const retryPolicy: Omit<RetryPolicy, 'retryCount'> = {
+const retryPolicy: Partial<RetryPolicy> = {
   maxRetries: number;
   backoff: boolean;
   retryDelay: number;
