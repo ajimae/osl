@@ -26,7 +26,7 @@
     ]
   },
   "scripts": {
-    "lint": "tsc",
+    "lint": "tsc --noEmit",
     "build": "preconstruct build",
     "postinstall": "manypkg check && preconstruct dev",
     "test": "jest --coverage",

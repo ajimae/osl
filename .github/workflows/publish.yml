@@ -25,7 +25,8 @@ jobs:
           token: ${{ secrets.REPO_TOKEN }}
 
       - name: Read .nvmrc
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+        # run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+        run: echo NVMRC=$(cat .nvmrc) >> $GITHUB_OUTPUT
         id: nvm
 
       - name: Setup Node (uses version in .nvmrc)
@@ -35,7 +36,8 @@ jobs:
 
       - name: Get yarn cache
         id: yarn-cache
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        # run: echo "::set-output name=dir::$(yarn cache dir)"
+        run: echo dir=$(yarn cache dir) >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v3
         with:
@@ -59,7 +61,10 @@ jobs:
 
 
       - name: Building packages
-        run: yarn lint && yarn build
+        run: |
+          yarn lint
+          yarn build
+          yarn test
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
