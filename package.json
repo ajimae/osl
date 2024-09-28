@@ -4,9 +4,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": ["packages/*"],
   "dependencies": {
     "@babel/core": "^7.22.9",
     "@babel/preset-env": "^7.22.9",
@@ -21,9 +19,7 @@
     "typescript": "^5.1.6"
   },
   "preconstruct": {
-    "packages": [
-      "packages/*"
-    ]
+    "packages": ["packages/*"]
   },
   "scripts": {
     "lint": "tsc --noEmit",
